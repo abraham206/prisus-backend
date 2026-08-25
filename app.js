@@ -1,5 +1,6 @@
 console.log(5);
 
+// https://prisus-backend.onrender.com
 const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
@@ -23,6 +24,7 @@ const helmet = require("helmet");
 //limit
 
 app.use(helmet());
+app.set("trust proxy", 1);
 
 app.use(
   cors({
@@ -43,7 +45,7 @@ app.use(cookieParser());
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname,"document"));
+    cb(null, path.join(__dirname, "document"));
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
