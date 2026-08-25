@@ -1,6 +1,3 @@
-console.log(5);
-
-// https://prisus-backend.onrender.com
 const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
@@ -18,23 +15,19 @@ const cookieParser = require("cookie-parser");
 const quizRoute = require("./routes/quizroute");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
-//helmet
-//express-mongo-sanitize
-//xss-clean
-//limit
 
 app.use(helmet());
 app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URI,
     credentials: true,
   }),
 );
 
 const limiter = rateLimit({
-  max: 100,
+  max: 300,
   windowMs: 60 * 60 * 1000,
   message: { message: "Too many reuests with this IP, try again in 1 hour" },
 });

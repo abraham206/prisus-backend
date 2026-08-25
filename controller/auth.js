@@ -50,48 +50,47 @@ exports.refresh = async (req, res, next) => {
   try {
     const token = req.cookies.refreshToken;
     if (!token) {
-      console.log("no token");
       const err = new Error("You are not authenticated!");
       err.statusCode = 401;
       throw err;
     }
 
-    if(token){
-    console.log(token, "the token");
-    const user = await User.searchByToken(token);
-    if (!user) {
-      console.log("no user");
+    if (token) {
+      const user = await User.searchByToken(token);
+      if (!user) {
+        const err = new Error("You are not authenticated!");
+        err.statusCode = 401;
+        throw err;
+      }
 
-      const err = new Error("You are not authenticated!");
-      err.statusCode = 401;
-      throw err;
-    }
+      if (user.expireDate <= Date.now()) {
+        const err = new Error(
+          "You are not authenticated, login to complete action",
+        );
+        err.statusCode = 401;
+        throw err;
+      }
 
-    if (user.expireDate <= Date.now()) {
-
-      const err = new Error(
-        "You are not authenticated, login to complete action",
+      const newToken = jwt.sign(
+        { email: user.email, id: user._id.toString() },
+        process.env.ACCESS_TOKEN_CODE,
+        { expiresIn: "30m" },
       );
-      err.statusCode = 401;
-      throw err;
+
+      res.status(200).json({ token: newToken });
     }
-
-    const newToken = jwt.sign(
-      { email: user.email, id: user._id.toString() },
-      process.env.ACCESS_TOKEN_CODE,
-      { expiresIn: "30m" },
-    );
-
-    res.status(200).json({ token: newToken });
-  }
   } catch (error) {
     next(error);
   }
 };
 
 exports.logout = async (req, res, next) => {
-  res.clearCookie("refreshToken");
-  req.user = null;
-  req.auth = false;
-  res.status(201).json({ message: "logged out successfully" });
+  try {
+    res.clearCookie("refreshToken");
+    req.user = null;
+    req.auth = false;
+    res.status(201).json({ message: "logged out successfully" });
+  } catch (error) {
+    next(error);
+  }
 };

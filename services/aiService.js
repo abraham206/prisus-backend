@@ -1,4 +1,4 @@
-const clearpdf = require("./clearpdf").clearpdf;
+const clearpdf = require("./document").clearpdf;
 const OpenAi = require("openai");
 const client = new OpenAi({
   apiKey: `${process.env.OPENAI_KEY}`,
@@ -220,5 +220,7 @@ exports.generateFlashCard = async (req, res, next) => {
       flashcards: JSON.parse(response.choices[0].message.content),
       message: "fetched succsessfully",
     });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };

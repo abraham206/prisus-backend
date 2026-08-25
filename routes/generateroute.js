@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const generateData = require("../controller/generatedata");
+const aiService = require("../services/aiService");
+const asyncHandler = require("../asyncHandler").asyncHandler;
 
-router.post("/quiz", generateData.generateQuiz);
-router.post("/flashcards", generateData.generateFlashCard);
+router.post("/quiz", asyncHandler(aiService.generateQuiz));
+router.post("/flashcards", asyncHandler(aiService.generateFlashCard));
 module.exports = router;

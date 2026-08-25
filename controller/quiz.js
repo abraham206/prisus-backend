@@ -22,13 +22,17 @@ exports.updateQuiz = async (req, res, next) => {
 };
 
 exports.getQuiz = async (req, res, next) => {
-  const id = req.params.realId;
-  const quiz = await Quiz.findById(id);
-  if (!quiz) {
-    const error = new Error("Could not find the data");
-    error.statusCode = 404;
-    throw error;
-  }
+  try {
+    const id = req.params.realId;
+    const quiz = await Quiz.findById(id);
+    if (!quiz) {
+      const error = new Error("Could not find the data");
+      error.statusCode = 404;
+      throw error;
+    }
 
-  res.status(201).json({ message: "fetched successfully", quiz: quiz });
+    res.status(201).json({ message: "fetched successfully", quiz: quiz });
+  } catch (error) {
+    next(error);
+  }
 };

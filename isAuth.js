@@ -7,10 +7,11 @@ const isAuth = async (req, res, next) => {
 
     if (!authHeader) {
       req.isAuth = false;
-      return next();
+      const err = new Error("Authentication Required to access this!");
+      err.statusCode = 401;
+      throw err;
     }
     const token = authHeader.split(" ")[1];
-    console.log(token);
 
     if (!token) {
       const error = new Error(
@@ -22,7 +23,7 @@ const isAuth = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_CODE);
 
-    const user = await User.searchUserByEmail(decoded.email);
+    const user = await User.findById(decoded.id);
 
     if (!user) {
       const error = new Error("User not found");
@@ -44,7 +45,6 @@ const isAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("isAuth error:", error);
     req.isAuth = false;
 
     if (error.name === "TokenExpiredError") {
