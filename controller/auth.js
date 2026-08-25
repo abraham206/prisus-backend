@@ -18,7 +18,7 @@ const months = [
 
 exports.createUser = async (req, res, next) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    const { name, email, password } = req.body;
     const verified = false;
     const createdAt = Date.now();
     const date = new Date(createdAt);
