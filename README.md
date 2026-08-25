@@ -54,7 +54,7 @@ prius-backend/
 │   ├── generatedata.js
 │   ├── quiz.js
 │   └── user.js
-│
+|
 ├── document/
 │
 ├── model/
