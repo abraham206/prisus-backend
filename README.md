@@ -76,7 +76,7 @@ prius-backend/
 
 Clone the repository:
 
-git clone https://github.com/YOUR-USERNAME/prius-backend.git
+git clone https://github.com/abraham206/prius-backend.git
 
 Navigate into the project:
 
@@ -152,8 +152,6 @@ Recommended deployment stack:
 
 📌 Future Improvements
 
-- Quiz history
-- Flashcard management
 - User dashboard improvements
 - Document processing improvements
 - Rate limiting
