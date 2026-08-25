@@ -13,7 +13,7 @@ router.post(
 router.post(
   "/signup",
   validator.validate(schema.signupSchema),
-  asyncHandler(userController.createUser),
+  asyncHandler(authController.createUser),
 );
 router.get("/auth/refresh", asyncHandler(authController.refresh));
 router.get("/auth/logout", asyncHandler(authController.logout));
