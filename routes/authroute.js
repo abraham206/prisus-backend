@@ -10,6 +10,11 @@ router.post(
   validator.validate(schema.signinSchema),
   asyncHandler(authController.signin),
 );
+router.post(
+  "/signup",
+  validator.validate(schema.signupSchema),
+  asyncHandler(userController.createUser),
+);
 router.get("/auth/refresh", asyncHandler(authController.refresh));
 router.get("/auth/logout", asyncHandler(authController.logout));
 

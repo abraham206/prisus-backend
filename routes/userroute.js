@@ -5,11 +5,6 @@ const asyncHandler = require("../asyncHandler").asyncHandler;
 const validator = require("../validation/validation-middleware");
 const schema = require("../validation/validation-schema");
 
-router.post(
-  "/signup",
-  validator.validate(schema.signupSchema),
-  asyncHandler(userController.createUser),
-);
 router.get("/getUser", asyncHandler(userController.getUser));
 router.delete("/delete-user", asyncHandler(userController.deleteUser));
 router.patch(
