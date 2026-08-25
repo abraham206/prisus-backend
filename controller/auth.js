@@ -36,7 +36,7 @@ exports.signin = async (req, res, next) => {
       httpOnly: true,
       sameSite: "none",
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      secure: false,
+      secure: true,
     });
 
     res.status(200).json({ token: token });
