@@ -25,7 +25,7 @@ exports.clearpdf = async (file) => {
     return data;
   } catch (error) {
   } finally {
-    fs.unlink(req.file.name, (err) => {
+    await fs.promises.unlink(file.path, (err) => {
       if (err) {
         console.log("Error deleting uploaded file!");
       }
