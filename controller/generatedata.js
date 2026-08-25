@@ -33,12 +33,10 @@ exports.generateQuiz = async (req, res, next) => {
       throw err;
     }
     const data = await clearpdf(req.file);
-    console.log(data);
     const baseName = path.basename(req.file.path);
     const totalQuestion = req.body.numbers;
     const difficulty = req.body.mode;
     const duration = req.body.duration * 60;
-    console.log(totalQuestion, 43);
     const timeStamp = Date.now();
     const timeStampDate = new Date(timeStamp);
     const month = timeStampDate.getMonth();
@@ -107,8 +105,6 @@ exports.generateQuiz = async (req, res, next) => {
         },
       ],
     });
-
-    console.log(response.choices[0].message.content);
 
     if (!response) {
       const error = new Error("Something Went Wrong!");
@@ -220,7 +216,6 @@ exports.generateFlashCard = async (req, res, next) => {
         },
       ],
     });
-    console.log(response.choices[0].message.content);
     res.status(201).json({
       flashcards: JSON.parse(response.choices[0].message.content),
       message: "fetched succsessfully",

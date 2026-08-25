@@ -165,7 +165,7 @@ exports.changeUserPassword = async (req, res, next) => {
     await User.saveToken(freshUser.email, refreshToken, next30days);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 30 * 24 * 60 * 60 * 1000,
       secure: false,
     });

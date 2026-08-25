@@ -6,7 +6,6 @@ exports.signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const next30days = Date.now() + 30 * 24 * 60 * 60 * 1000;
-    console.log(email, password);
     const user = await User.searchUserByEmail(email);
     if (!user) {
       const error = new Error("Could not find an account with that email!");
@@ -52,12 +51,12 @@ exports.refresh = async (req, res, next) => {
     const token = req.cookies.refreshToken;
     if (!token) {
       console.log("no token");
-
       const err = new Error("You are not authenticated!");
       err.statusCode = 401;
       throw err;
     }
 
+    if(token){
     console.log(token, "the token");
     const user = await User.searchByToken(token);
     if (!user) {
@@ -69,7 +68,6 @@ exports.refresh = async (req, res, next) => {
     }
 
     if (user.expireDate <= Date.now()) {
-      console.log("date issues");
 
       const err = new Error(
         "You are not authenticated, login to complete action",
@@ -85,6 +83,7 @@ exports.refresh = async (req, res, next) => {
     );
 
     res.status(200).json({ token: newToken });
+  }
   } catch (error) {
     next(error);
   }

@@ -3,14 +3,10 @@ const Quiz = require("../model/quiz");
 exports.updateQuiz = async (req, res, next) => {
   try {
     const id = req.params.quizId;
-    console.log(id);
     const answeredQuestions = req.body.answeredQuestions;
     const incorrect = req.body.incorrectPercent;
     const percent = req.body.percent;
-
-    console.log(answeredQuestions, "hi");
     const timeTaken = req.body.timeTaken;
-
     const quiz = await Quiz.findById(id);
 
     if (!quiz) {
