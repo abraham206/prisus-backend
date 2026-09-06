@@ -30,12 +30,16 @@ exports.clearpdf = async (file) => {
   } catch (error) {
     throw error;
   } finally {
-    await fs.promises.unlink(file.path, (err) => {
-      if (err) {
+    try {
+      if (file?.path) {
+        await fs.promises.unlink(file.path);
+      }
+    } catch (error) {
+      if (error) {
         const error = new Error("Could not delete file!!");
         error.statusCode = 500;
         throw error;
       }
-    });
+    }
   }
 };
