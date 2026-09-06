@@ -222,7 +222,7 @@ exports.generateFlashCard = async (req, res, next) => {
     const hours = timeStampDate.getHours();
     const mins = timeStampDate.getMinutes();
     const time = `${hours}:${mins} ${hours < 13 ? "AM" : "PM"}`;
-    const fileType = path.extname(req.file.path);
+    const fileType = path.extname(file.originalname.toLowerCase());
 
     const response = await client.chat.completions.create({
       model: "liquid/lfm-2.5-2.6b:free",
