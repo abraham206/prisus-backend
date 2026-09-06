@@ -9,22 +9,28 @@ exports.clearpdf = async (file) => {
   try {
     const buffer = file.buffer;
     let data;
-    if (path.extname(file.path) === ".pdf") {
+    if (path.extname(file.originalname.toLowerCase()) === ".pdf") {
       const pdfResult = await pdfParse(buffer);
       data = pdfResult.text;
     }
 
     if (
-      path.extname(file.path) === ".docx" ||
-      path.extname(file.path) === ".doc"
+      path.extname(file.originalname.toLowerCase()) === ".doc" ||
+      path.extname(file.originalname.toLowerCase()) === ".docx"
     ) {
       const extractor = new wordExtractor();
       const document = await extractor.extract(buffer);
       data = document.getBody();
     }
 
-    if (path.extname(file.path) === ".txt") {
-      data = await fs.promises.readFile(file.path, "utf8");
+    if (path.extname(file.originalname.toLowerCase()) === ".txt") {
+      data = buffer.toString("utf-8");
+    } else {
+      const error = new Error(
+        `Unsupported file type. type:${path.extname(file.originalname.toLowerCase())}`,
+      );
+      error.statusCode = 400;
+      throw error;
     }
     return data;
   } catch (error) {
