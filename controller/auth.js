@@ -23,7 +23,7 @@ exports.createUser = async (req, res, next) => {
     const createdAt = Date.now();
     const date = new Date(createdAt);
     const month = date.getMonth();
-    const day = date.getDay();
+    const day = date.getDate();
     const year = date.getFullYear();
     const quizCreated = [];
     const id = null;
