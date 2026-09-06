@@ -18,6 +18,8 @@ A backend API for an AI-powered study platform that allows users to upload study
 - Error handling
 - Protected routes
 - Environment variable configuration
+- validation with zod
+- Rate limiting
 
 📄 Supported Documents
 
@@ -26,6 +28,7 @@ The application can process:
 - PDF (".pdf")
 - Microsoft Word (".doc")
 - Microsoft Word (".docx")
+- Text documents (".txt")
 
 Uploaded documents are processed temporarily and are not intended for permanent storage.
 
@@ -43,7 +46,7 @@ Uploaded documents are processed temporarily and are not intended for permanent 
 - Word Extractor
 - AI API
 
-📁 Project Structure
+<!-- 📁 Project Structure
 
 prius-backend/
 │
@@ -71,6 +74,7 @@ prius-backend/
 ├── config.env
 ├── package.json
 └── .gitignore
+ -->
 
 ⚙️ Installation
 
@@ -116,17 +120,17 @@ http://localhost:5000
 🔄 Application Flow
 
 User
-  ↓
+↓
 Upload Document
-  ↓
+↓
 Multer
-  ↓
+↓
 Text Extraction
-  ↓
+↓
 AI API
-  ↓
+↓
 Quiz / Flashcard Generation
-  ↓
+↓
 Return Generated Study Material
 
 🔒 Security
@@ -147,17 +151,15 @@ Recommended deployment stack:
 
 - Backend: Render
 - Database: MongoDB Atlas
-- Frontend: Vercel
+- Frontend: Netlify
 - Version Control: GitHub
 
 📌 Future Improvements
 
 - User dashboard improvements
 - Document processing improvements
-- Rate limiting
 - Improved AI response validation
 - Better error handling
 - Email verification
 - Password reset functionality
 - Deployment monitoring
-

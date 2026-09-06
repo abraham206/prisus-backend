@@ -48,6 +48,7 @@ exports.createUser = async (req, res, next) => {
       active,
     );
     const regUser = await user.createUser();
+    const next30days = Date.now() + 30 * 24 * 60 * 60 * 1000;
 
     const token = jwt.sign(
       { email: user.email, id: user._id.toString() },

@@ -9,6 +9,10 @@ const errorController = (err, req, res, next) => {
   if (statusCode === 500) {
     message === "Something went wrong";
   }
+
+  if (statusCode === 429) {
+    message === "Service is currently busy, try again in a few moments";
+  }
   res.status(err.statusCode || 500).json({
     message: message,
     success: false,

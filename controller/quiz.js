@@ -1,4 +1,5 @@
 const Quiz = require("../model/quiz");
+const Session = require("../model/session");
 
 exports.updateQuiz = async (req, res, next) => {
   try {
@@ -15,6 +16,7 @@ exports.updateQuiz = async (req, res, next) => {
       throw err;
     }
     await Quiz.updateByQuizId(id, answeredQuestions, percent, timeTaken);
+    await Session.updateSession(req.user.id, id, percent);
     res.status(201).json({ message: "quiz score saved" });
   } catch (error) {
     next(error);

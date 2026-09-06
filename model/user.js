@@ -29,6 +29,7 @@ class User {
 
   static searchUserByEmail(email) {
     const db = getDb();
+    db.collection("users").createIndex({ email: 1, active: 1 });
     return db.collection("users").findOne({
       email: email,
       active: true,
@@ -98,12 +99,50 @@ class User {
     );
   }
 
-  static updatePassword(password) {
+  static updatePassword(password, userId) {
     const db = getDb();
     db.collection("users").updateOne(
-      { _id: new mongodb.ObjectId(req.user.id) },
+      { _id: new mongodb.ObjectId(userId) },
       { $set: { password: password } },
     );
+  }
+
+  static getUserStats(userId) {
+    const db = getDb();
+    return db
+      .collection("quiz")
+      .aggregate([
+        { $match: { userId: userId } },
+
+        {
+          $project: {
+            subject: 1,
+            _id: 1,
+            date: 1,
+            duration: 1,
+            score: 1,
+            totalQuestion: 1,
+            time: 1,
+            id: 1,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            quiz: { $push: "$$ROOT" },
+            totalQuizCreated: { $sum: 1 },
+            averageScore: { $avg: "$score" },
+            totalTime: { $sum: "$duration" },
+          },
+        },
+      ])
+      .toArray();
+  }
+
+  static getSession(id) {
+    const db = getDb();
+    db.collection("sessions").createIndex({ userId: 1 });
+    return db.collection("sessions").find({ userId: id }).toArray();
   }
 }
 

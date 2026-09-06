@@ -22,12 +22,19 @@ exports.clearpdf = async (file) => {
       const document = await extractor.extract(buffer);
       data = document.getBody();
     }
+
+    if (path.extname(file.path) === ".txt") {
+      data = await fs.promises.readFile(file.path, "utf8");
+    }
     return data;
   } catch (error) {
+    throw error;
   } finally {
     await fs.promises.unlink(file.path, (err) => {
       if (err) {
-        console.log("Error deleting uploaded file!");
+        const error = new Error("Could not delete file!!");
+        error.statusCode = 500;
+        throw error;
       }
     });
   }

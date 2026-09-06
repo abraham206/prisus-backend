@@ -15,6 +15,7 @@ const cookieParser = require("cookie-parser");
 const quizRoute = require("./routes/quizroute");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const flashcardRoute = require("./routes/flashcardroute");
 
 app.use(helmet());
 app.set("trust proxy", 1);
@@ -50,8 +51,6 @@ const fileFilter = (req, file, cb) => {
     "application/pdf", //pdf
     "application/msword", //doc
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document", //docx
-    "application/vnd.ms-powerpoint", //ppt
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation", //pptx
     "text/plain", //txt
   ];
 
@@ -82,10 +81,12 @@ app.use("/api", isAuth, userroute);
 
 app.use("/api", isAuth, quizRoute);
 
+app.use("/api", isAuth, flashcardRoute);
+
 // Auth middleware
 // Error handling
 app.use(errorController);
-
+//
 mongoConnect();
 app.listen(process.env.PORT || 8080, () => {
   console.log(`server is running on port ${process.env.PORT || 8080}`);

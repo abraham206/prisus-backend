@@ -1,5 +1,6 @@
 const clearpdf = require("./document").clearpdf;
 const OpenAi = require("openai");
+const Session = require("../model/session");
 const client = new OpenAi({
   apiKey: `${process.env.OPENAI_KEY}`,
   baseURL: "https://openrouter.ai/api/v1",
@@ -7,6 +8,8 @@ const client = new OpenAi({
 const path = require("path");
 const Quiz = require("../model/quiz");
 const User = require("../model/user");
+const FlashCard = require("../model/flashcard");
+const saveDoc = require("../util/saveDoc").saveDocs;
 const months = [
   "Jan",
   "Feb",
@@ -32,6 +35,8 @@ exports.generateQuiz = async (req, res, next) => {
       err.statusCode = 400;
       throw err;
     }
+
+    saveDoc(req.file, "Quiz", req.user?.id);
     const data = await clearpdf(req.file);
     const baseName = path.basename(req.file.path);
     const totalQuestion = req.body.numbers;
@@ -49,9 +54,11 @@ exports.generateQuiz = async (req, res, next) => {
     const score = 0;
     const timeTaken = 0;
     const fileType = path.extname(req.file.path);
-
+    let subject;
+    // liquid/lfm-2.5-2.6b:free
+    // google/gemma-4-31b-it:free
     const response = await client.chat.completions.create({
-      model: "google/gemma-4-26b-a4b-it:free",
+      model: "liquid/lfm-2.5-2.6b:free",
       messages: [
         {
           role: "system",
@@ -62,7 +69,7 @@ exports.generateQuiz = async (req, res, next) => {
           role: "user",
           content: `You are a quiz generation AI.
 
-            Generate exactly ${totalQuestion}} multiple-choice questions based ONLY on the provided document and set difficulty to ${difficulty}.
+            Generate exactly ${totalQuestion}} multiple-choice questions based ONLY on the provided document and set difficulty to ${difficulty}, then create a subject name based on the provided document
 
             Return ONLY valid JSON.
 
@@ -85,6 +92,7 @@ exports.generateQuiz = async (req, res, next) => {
             Expected format:
 
             {
+              "subject": "Biology"
               "questions": [
                 {
                   "question": "What is ...?",
@@ -112,14 +120,24 @@ exports.generateQuiz = async (req, res, next) => {
       throw error;
     }
 
-    const parsed = JSON.parse(response.choices[0].message.content);
-    const questions = Array.isArray(parsed) ? parsed : parsed.questions || [];
+    // const parsed = JSON.parse(response.choices[0].message.content);
+    // const questions = Array.isArray(parsed) ? parsed : parsed.questions || [];
+    const questionSchema = JSON.parse(
+      response.choices[0].message.content,
+    ).questions.map((el, num) => ({
+      questionNo: num,
+      question: el.question,
+      correctAnswer: el.answer,
+      answerSelected: null,
+      explanation: el.explanation,
+    }));
+
     const quiz = new Quiz(
       JSON.parse(response.choices[0].message.content).questions,
       req.user?.id,
       difficulty,
       duration,
-      baseName,
+      JSON.parse(response.choices[0].message.content).subject,
       `${months[month]} ${day}, ${year}`,
       time,
       FakeId,
@@ -127,6 +145,7 @@ exports.generateQuiz = async (req, res, next) => {
       score,
       timeTaken,
       fileType,
+      totalQuestion,
     );
     await quiz.save();
     const user = await User.findById(req.user.id);
@@ -142,7 +161,7 @@ exports.generateQuiz = async (req, res, next) => {
       ...JSON.parse(response.choices[0].message.content),
       quizTime: duration,
       difficulty: difficulty,
-      name: baseName,
+      subject: JSON.parse(response.choices[0].message.content).subject,
       date: `${months[month]} ${day}, ${year}`,
       time: time,
       id: FakeId,
@@ -153,16 +172,32 @@ exports.generateQuiz = async (req, res, next) => {
     });
 
     await User.updateQuizCreated(req.user?.id, userQuiz, verified);
-    res.status(200).json({
-      ...JSON.parse(response.choices[0].message.content),
-      quizTime: duration,
-      difficulty: difficulty,
-      name: baseName,
-      date: `${months[month]} ${day}, ${year}`,
-      time: time,
-      id: FakeId,
-      fileType: fileType,
-    });
+    const session = new Session(
+      req.user.id,
+      "quiz",
+      totalQuestion,
+      JSON.parse(response.choices[0].message.content).subject,
+      `${months[month]} ${day}, ${year}`,
+      time,
+      null,
+      fileType,
+      FakeId,
+      timeStamp,
+    );
+    await session.save();
+    if (questionSchema) {
+      res.status(200).json({
+        ...JSON.parse(response.choices[0].message.content),
+        quizTime: duration,
+        difficulty: difficulty,
+        name: JSON.parse(response.choices[0].message.content).subject,
+        date: `${months[month]} ${day}, ${year}`,
+        time: time,
+        id: FakeId,
+        fileType: fileType,
+        questionSchema: questionSchema,
+      });
+    }
   } catch (err) {
     next(err);
   }
@@ -175,10 +210,23 @@ exports.generateFlashCard = async (req, res, next) => {
       err.statusCode = 400;
       throw err;
     }
+    saveDoc(req.file, "Flashcard", req.user?.id);
+    const { nanoid } = await import("nanoid");
+    const FakeId = nanoid();
 
     const data = await clearpdf(req.file);
+    const timeStamp = Date.now();
+    const timeStampDate = new Date(timeStamp);
+    const month = timeStampDate.getMonth();
+    const day = timeStampDate.getDay();
+    const year = timeStampDate.getFullYear();
+    const hours = timeStampDate.getHours();
+    const mins = timeStampDate.getMinutes();
+    const time = `${hours}:${mins} ${hours < 13 ? "AM" : "PM"}`;
+    const fileType = path.extname(req.file.path);
+
     const response = await client.chat.completions.create({
-      model: "google/gemma-4-26b-a4b-it:free",
+      model: "liquid/lfm-2.5-2.6b:free",
       messages: [
         {
           role: "system",
@@ -189,7 +237,7 @@ exports.generateFlashCard = async (req, res, next) => {
           role: "user",
           content: `
         You are an educational flashcard generator.
-        Based ONLY on the study material below, generate 10 usefull flashcards.
+        Based ONLY on the study material below, generate exactly 30 usefull flashcards and from the study material provided, generate a subject name that fits it.
         Each flashcards must contain:
         - question: a clear question about an important concept.
         - answer: a concise but accurate answer.
@@ -202,7 +250,7 @@ exports.generateFlashCard = async (req, res, next) => {
 
         Return only valid JSON in this format:
 
-        {
+        { "subject":"Biology",
           "flashcards":[
               {
                   "question":"What is active transport?",
@@ -216,6 +264,33 @@ exports.generateFlashCard = async (req, res, next) => {
         },
       ],
     });
+
+    const session = new Session(
+      req.user.id,
+      "flashcards",
+      20,
+      JSON.parse(response.choices[0].message.content).subject,
+      `${months[month]} ${day}, ${year}`,
+      time,
+      null,
+      fileType,
+      FakeId,
+      timeStamp,
+    );
+    await session.save();
+
+    const flashcard = new FlashCard(
+      req.user.id,
+      JSON.parse(response.choices[0].message.content).flashcards,
+      20,
+      JSON.parse(response.choices[0].message.content).subject,
+      `${months[month]} ${day}, ${year}`,
+      time,
+      fileType,
+      FakeId,
+    );
+
+    await flashcard.save();
     res.status(201).json({
       flashcards: JSON.parse(response.choices[0].message.content),
       message: "fetched succsessfully",

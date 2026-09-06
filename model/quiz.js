@@ -7,7 +7,7 @@ class Quiz {
     userId,
     difficulty,
     duration,
-    name,
+    subject,
     date,
     time,
     id,
@@ -15,12 +15,13 @@ class Quiz {
     score,
     timeTaken,
     fileType,
+    totalQuestion,
   ) {
     this.questions = questions;
     this.userId = userId;
     this.difficulty = difficulty;
     this.duration = duration;
-    this.name = name;
+    this.subject = subject;
     this.date = date;
     this.time = time;
     this.id = id;
@@ -28,11 +29,12 @@ class Quiz {
     this.score = score;
     this.timeTaken = timeTaken;
     this.fileType = fileType;
+    this.totalQuestion = totalQuestion;
   }
 
   save() {
     const db = getDb();
-    db.collection("quiz").insertOne(this);
+    return db.collection("quiz").insertOne(this);
   }
 
   static updateByQuizId(id, answeredQuestions, score, timeTaken) {
@@ -51,7 +53,19 @@ class Quiz {
 
   static findById(id) {
     const db = getDb();
+    db.collection("quiz").createIndex({ id: 1 });
     return db.collection("quiz").findOne({ id: id });
+  }
+
+  static findAllQuiz(id) {
+    const db = getDb();
+    db.collection("quiz").createIndex({ userId: 1 });
+    return db.collection("quiz").find({ userId: id }).pretty();
+  }
+
+  static getQuizStats(id) {
+    const db = getDb();
+    // db.quiz.aggregate([{ $match: { userId: id } }, { $group: { _id: $ } }]);
   }
 }
 

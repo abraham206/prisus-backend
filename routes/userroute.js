@@ -18,4 +18,7 @@ router.patch(
   asyncHandler(userController.changeUserPassword),
 );
 
+router.get("/user-dashboard", asyncHandler(userController.userDashboard));
+router.get("/user-session", asyncHandler(userController.getUserSession));
+
 module.exports = router;
