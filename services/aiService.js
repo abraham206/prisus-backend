@@ -52,7 +52,7 @@ exports.generateQuiz = async (req, res, next) => {
     const answeredQuestions = [];
     const score = 0;
     const timeTaken = 0;
-    const fileType = path.extname(file.originalname.toLowerCase());
+    const fileType = path.extname(req.file.originalname.toLowerCase());
     let subject;
     // liquid/lfm-2.5-2.6b:free
     // google/gemma-4-31b-it:free
@@ -222,7 +222,7 @@ exports.generateFlashCard = async (req, res, next) => {
     const hours = timeStampDate.getHours();
     const mins = timeStampDate.getMinutes();
     const time = `${hours}:${mins} ${hours < 13 ? "AM" : "PM"}`;
-    const fileType = path.extname(file.originalname.toLowerCase());
+    const fileType = path.extname(req.file.originalname.toLowerCase());
 
     const response = await client.chat.completions.create({
       model: "liquid/lfm-2.5-2.6b:free",
