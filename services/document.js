@@ -25,13 +25,8 @@ exports.clearpdf = async (file) => {
 
     if (path.extname(file.originalname.toLowerCase()) === ".txt") {
       data = buffer.toString("utf-8");
-    } else {
-      const error = new Error(
-        `Unsupported file type. type:${path.extname(file.originalname.toLowerCase())}`,
-      );
-      error.statusCode = 400;
-      throw error;
     }
+
     return data;
   } catch (error) {
     throw error;
