@@ -7,7 +7,7 @@ const pdfParse = require("pdf-parse");
 
 exports.clearpdf = async (file) => {
   try {
-    const buffer = fs.readFileSync(file.path);
+    const buffer = file.buffer;
     let data;
     if (path.extname(file.path) === ".pdf") {
       const pdfResult = await pdfParse(buffer);
@@ -29,17 +29,5 @@ exports.clearpdf = async (file) => {
     return data;
   } catch (error) {
     throw error;
-  } finally {
-    try {
-      if (file?.path) {
-        await fs.promises.unlink(file.path);
-      }
-    } catch (error) {
-      if (error) {
-        const error = new Error("Could not delete file!!");
-        error.statusCode = 500;
-        throw error;
-      }
-    }
   }
 };

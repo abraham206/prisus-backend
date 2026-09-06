@@ -37,7 +37,7 @@ app.use("/api", limiter);
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
 
-const fileStorage = multer.diskStorage({
+const fileStorage = multer.memoryStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "document"));
   },
