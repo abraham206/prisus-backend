@@ -1,4 +1,5 @@
 const Document = require("../model/user-doc");
+const path = require("path");
 
 exports.saveDocs = async (file, type, userId) => {
   try {
@@ -7,7 +8,7 @@ exports.saveDocs = async (file, type, userId) => {
     const _id = null;
     const size = file.size;
     const timeStamp = Date.now();
-    const fileType = file.mimetype;
+    const fileType = path.extname(file.originalname.toLowerCase());
     const doc = new Document(
       _id,
       name,

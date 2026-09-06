@@ -38,7 +38,6 @@ exports.generateQuiz = async (req, res, next) => {
 
     saveDoc(req.file, "Quiz", req.user?.id);
     const data = await clearpdf(req.file);
-    const baseName = path.basename(req.file.path);
     const totalQuestion = req.body.numbers;
     const difficulty = req.body.mode;
     const duration = req.body.duration * 60;
@@ -53,7 +52,7 @@ exports.generateQuiz = async (req, res, next) => {
     const answeredQuestions = [];
     const score = 0;
     const timeTaken = 0;
-    const fileType = path.extname(req.file.path);
+    const fileType = path.extname(file.originalname.toLowerCase());
     let subject;
     // liquid/lfm-2.5-2.6b:free
     // google/gemma-4-31b-it:free
