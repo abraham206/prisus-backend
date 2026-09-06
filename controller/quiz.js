@@ -26,6 +26,7 @@ exports.updateQuiz = async (req, res, next) => {
 exports.getQuiz = async (req, res, next) => {
   try {
     const id = req.params.realId;
+    console.log(id, "quizId");
     const quiz = await Quiz.findById(id);
     if (!quiz) {
       const error = new Error("Could not find the data");
