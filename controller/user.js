@@ -33,7 +33,7 @@ exports.deleteUser = async (req, res, next) => {
       throw err;
     }
     await User.deleteUser(id);
-    res.status(201).json({ message: "Deleted Successfully" });
+    res.status(200).json({ message: "Deleted Successfully" });
   } catch (error) {
     next(error);
   }
@@ -50,7 +50,7 @@ exports.editUser = async (req, res, next) => {
       throw err;
     }
     await User.updateUser(req.user.id, name, email);
-    res.status(201).json({ message: "Updated Successfully!" });
+    res.status(200).json({ message: "Updated Successfully!" });
   } catch (error) {
     next(error);
   }
@@ -68,8 +68,16 @@ exports.changeUserPassword = async (req, res, next) => {
       throw err;
     }
 
+    if (newPassword !== confirmPassword) {
+      const err = new Error("Password does not match!!");
+      err.statusCode = 400;
+      throw err;
+    }
+
     if (!oldPassword || !newPassword || !confirmPassword) {
       const err = new Error("All field must be filled up!!");
+      err.statusCode = 400;
+      throw err;
     }
     const isCorrect = await bcrypt.compare(oldPassword, user.password);
 
@@ -79,7 +87,7 @@ exports.changeUserPassword = async (req, res, next) => {
       throw err;
     }
     const password = await bcrypt.hash(newPassword, 12);
-    User.updatePassword(password, req.user.id);
+    await User.updatePassword(password, req.user.id);
     const token = jwt.sign(
       { email: user.email, id: user._id.toString() },
       process.env.ACCESS_TOKEN_CODE,
@@ -96,11 +104,11 @@ exports.changeUserPassword = async (req, res, next) => {
       httpOnly: true,
       sameSite: "none",
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      secure: false,
+      secure: true,
     });
 
     res
-      .status(201)
+      .status(200)
       .json({ message: "Password Updated Successfully", token: token });
   } catch (error) {
     next(error);
@@ -138,7 +146,7 @@ exports.getUserSession = async (req, res, next) => {
       throw err;
     }
 
-    res.status(201).json({
+    res.status(200).json({
       message: "fetched Sucessfully",
       sessions: sessions,
       totalFlashcards: numberOfFlashcards,

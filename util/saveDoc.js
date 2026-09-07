@@ -20,6 +20,8 @@ exports.saveDocs = async (file, type, userId) => {
     );
     await doc.save();
   } catch (error) {
-    console.log(error);
+    const err = new Error("Error saving document.");
+    err.statusCode = 500;
+    throw err;
   }
 };

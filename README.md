@@ -1,4 +1,4 @@
-Prius Backend API
+Prisus Backend API
 
 A backend API for an AI-powered study platform that allows users to upload study documents, extract their text content, and generate educational materials such as quizzes and flashcards using an AI API.
 

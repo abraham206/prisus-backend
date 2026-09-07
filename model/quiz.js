@@ -51,21 +51,16 @@ class Quiz {
     );
   }
 
-  static findById(id) {
+  static findById(id, userId) {
     const db = getDb();
     db.collection("quiz").createIndex({ id: 1 });
-    return db.collection("quiz").findOne({ id: id });
+    return db.collection("quiz").findOne({ id: id, userId: userId });
   }
 
   static findAllQuiz(id) {
     const db = getDb();
     db.collection("quiz").createIndex({ userId: 1 });
     return db.collection("quiz").find({ userId: id }).pretty();
-  }
-
-  static getQuizStats(id) {
-    const db = getDb();
-    // db.quiz.aggregate([{ $match: { userId: id } }, { $group: { _id: $ } }]);
   }
 }
 

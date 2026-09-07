@@ -54,8 +54,7 @@ exports.generateQuiz = async (req, res, next) => {
     const timeTaken = 0;
     const fileType = path.extname(req.file.originalname.toLowerCase());
     let subject;
-    // liquid/lfm-2.5-2.6b:free
-    // google/gemma-4-31b-it:free
+    const aiAgent = ['google/gemma-4-31b-it:free', 'liquid/lfm-2.5-2.6b:free']
     const response = await client.chat.completions.create({
       model: "liquid/lfm-2.5-2.6b:free",
       messages: [
@@ -118,9 +117,6 @@ exports.generateQuiz = async (req, res, next) => {
       error.statusCode = 500;
       throw error;
     }
-
-    // const parsed = JSON.parse(response.choices[0].message.content);
-    // const questions = Array.isArray(parsed) ? parsed : parsed.questions || [];
     const questionSchema = JSON.parse(
       response.choices[0].message.content,
     ).questions.map((el, num) => ({
@@ -185,7 +181,7 @@ exports.generateQuiz = async (req, res, next) => {
     );
     await session.save();
     if (questionSchema) {
-      res.status(200).json({
+      res.status(201).json({
         ...JSON.parse(response.choices[0].message.content),
         quizTime: duration,
         difficulty: difficulty,

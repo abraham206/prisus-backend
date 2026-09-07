@@ -16,7 +16,6 @@ exports.validate = (schema) => {
     }
 
     req.body = result.data;
-    console.log("Everything worked well");
     next();
   };
 };

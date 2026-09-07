@@ -85,26 +85,32 @@ class User {
 
   static deleteUser(id) {
     const db = getDb();
-    db.collection("users").updateOne(
-      { _id: new mongodb.ObjectId(id) },
-      { $set: { active: false } },
-    );
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new mongodb.ObjectId(id) },
+        { $set: { active: false } },
+      );
   }
 
   static updateUser(id, name, email) {
     const db = getDb();
-    db.collection("users").updateOne(
-      { _id: new mongodb.ObjectId(id) },
-      { $set: { name: name, email: email } },
-    );
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new mongodb.ObjectId(id) },
+        { $set: { name: name, email: email } },
+      );
   }
 
   static updatePassword(password, userId) {
     const db = getDb();
-    db.collection("users").updateOne(
-      { _id: new mongodb.ObjectId(userId) },
-      { $set: { password: password } },
-    );
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new mongodb.ObjectId(userId) },
+        { $set: { password: password } },
+      );
   }
 
   static getUserStats(userId) {

@@ -21,7 +21,7 @@ const getDb = () => {
   if (_db) {
     return _db;
   }
-  const error = new Error(`no database forund`);
+  const error = new Error(`no database found`);
   error.statusCode = 404;
   throw error;
 };

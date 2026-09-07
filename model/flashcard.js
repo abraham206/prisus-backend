@@ -26,10 +26,10 @@ class Flashcard {
     const db = getDb();
     return db.collection("flashcard").insertOne(this);
   }
-  static findById(id) {
+  static findById(id, userId) {
     const db = getDb();
     db.collection("flashcard").createIndex({ typeId: 1 });
-    return db.collection("flashcard").findOne({ FakeId: id });
+    return db.collection("flashcard").findOne({ FakeId: id, userId: userId });
   }
 
   static findAllFlashcard(id) {
