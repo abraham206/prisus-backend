@@ -14,6 +14,9 @@ A backend API for an AI-powered study platform that allows users to upload study
 - AI-powered quiz generation
 - AI-powered flashcard generation
 - Quiz management
+- Quiz history 
+- Flashcards history
+- Edit user data.
 - User-related functionality
 - Error handling
 - Protected routes
@@ -37,44 +40,17 @@ Uploaded documents are processed temporarily and are not intended for permanent 
 - Node.js
 - Express.js
 - MongoDB
-- Mongoose
 - JSON Web Tokens (JWT)
 - bcrypt
 - Multer
 - pdf-parse
 - Mammoth
 - Word Extractor
+- zod
 - AI API
+- openAI
+- express-rate-limiter
 
-<!-- 📁 Project Structure
-
-prius-backend/
-│
-├── controller/
-│   ├── auth.js
-│   ├── clearpdf.js
-│   ├── error.js
-│   ├── generatedata.js
-│   ├── quiz.js
-│   └── user.js
-|
-├── document/
-│
-├── model/
-│
-├── routes/
-│   ├── authroute.js
-│   ├── generateroute.js
-│   ├── quizroute.js
-│   └── userroute.js
-│
-├── util/
-│
-├── app.js
-├── config.env
-├── package.json
-└── .gitignore
- -->
 
 ⚙️ Installation
 
@@ -100,8 +76,6 @@ PORT=5000
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 OPENROUTER_API_KEY=your_ai_api_key
-
-«⚠️ Never upload your "config.env" file or API keys to GitHub.»
 
 ▶️ Running the Application
 
